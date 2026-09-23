@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Primary SEO tags -->
+<title>Twitter X Profile Scraper — Scrape X (Twitter) Profiles &amp; Tweets Without an API Key | MikoLabs</title>
+<meta name="description" content="Scrape public X (Twitter) profiles, tweets, replies, and media at scale — no API key, no authentication, no rate limits. Built by MikoLabs on Apify. Free tier available.">
+<meta name="keywords" content="twitter scraper, x scraper, scrape twitter profile, twitter data extraction, x api alternative, twitter tweet scraper, social media scraping, apify twitter actor">
+<meta name="author" content="MikoLabs">
+<link rel="canonical" href="https://mikolabs.xyz/twitter-x-profile-scraper/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Twitter X Profile Scraper — Scrape X (Twitter) Without an API Key">
+<meta property="og:description" content="Extract public profiles, tweets, replies, and media from X (Twitter) at scale — no API key, no auth, no rate limits.">
+<meta property="og:url" content="https://mikolabs.xyz/twitter-x-profile-scraper/">
+<meta property="og:site_name" content="MikoLabs">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Twitter X Profile Scraper — Scrape X (Twitter) Without an API Key">
+<meta name="twitter:description" content="Extract public profiles, tweets, replies, and media from X (Twitter) at scale — no API key, no auth, no rate limits.">
+
+<!-- Structured data: SoftwareApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Twitter X Profile Scraper",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "description": "Scrape public X (Twitter) profiles, tweets, replies, and media without an API key, authentication, or rate limits.",
+  "brand": { "@type": "Brand", "name": "MikoLabs" },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "description": "Free tier with $5 monthly usage credits on Apify"
+  }
+}
+</script>
+
+<!-- Structured data: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I scrape private Twitter profiles?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Twitter X Profile Scraper only works with public profiles. Private or protected accounts cannot be scraped." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need a Twitter API key or account?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. This Actor does not require any Twitter API credentials, cookies, or authentication. It works independently of the official Twitter API." }
+    },
+    {
+      "@type": "Question",
+      "name": "What export formats are available?",
+      "acceptedAnswer": { "@type": "Answer", "text": "You can export scraped data as JSON, CSV, Excel (XLSX), XML, RSS, or an HTML table directly from the Apify Console Dataset tab." }
+    },
+    {
+      "@type": "Question",
+      "name": "How many tweets can I scrape?",
+      "acceptedAnswer": { "@type": "Answer", "text": "On paid plans there is no hard-coded limit — set maxItems to 0 for unlimited scraping. On the free tier, users get up to 5 runs per day with up to 10 items per target." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I search for specific keywords within a profile?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use the searchTerms input field to search for keywords within a profile's tweets, with support for AND/OR operators." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it legal to scrape X (Twitter)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Personal data is protected by GDPR and similar regulations worldwide. Only scrape personal data with a legitimate reason, and review X's Terms of Service first. Always scrape responsibly and avoid collecting sensitive personal information." }
+    }
+  ]
+}
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0B0B0A;
+    --surface: #151310;
+    --surface-2: #1C1A16;
+    --ink: #EDEAE2;
+    --ink-dim: #9C958A;
+    --rule: #2A2724;
+    --red: #B3261E;
+    --red-bright: #D9483A;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  h1, h2, h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--ink);
+    margin: 0 0 0.5em;
+  }
+
+  code, pre, .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+
+  a { color: var(--red-bright); text-decoration: none; border-bottom: 1px solid rgba(217,72,58,0.35); }
+  a:hover { border-bottom-color: var(--red-bright); }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  header.hero {
+    padding: 88px 0 56px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .mark { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+  .mark svg { width: 30px; height: 30px; flex-shrink: 0; }
+  .mark span { font-family: 'IBM Plex Mono', monospace; font-size: 14px; letter-spacing: 0.02em; color: var(--ink-dim); }
+
+  h1 { font-size: clamp(2rem, 5vw, 2.9rem); max-width: 15ch; }
+
+  .lede {
+    font-size: 1.15rem;
+    color: var(--ink-dim);
+    max-width: 56ch;
+    margin: 20px 0 32px;
+  }
+
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 3px;
+    font-size: 0.95rem;
+    border-bottom: none;
+  }
+  .btn.primary { background: var(--red); color: #fff; }
+  .btn.primary:hover { background: var(--red-bright); }
+  .btn.ghost { color: var(--ink); border: 1px solid var(--rule); }
+  .btn.ghost:hover { border-color: var(--ink-dim); }
+
+  section { padding: 56px 0; border-bottom: 1px solid var(--rule); }
+  section:last-of-type { border-bottom: none; }
+
+  h2 { font-size: 1.6rem; border-top: 2px solid var(--red); padding-top: 14px; display: inline-block; }
+
+  h3 { font-size: 1.05rem; font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; margin-top: 28px; }
+
+  ul, ol { padding-left: 1.3em; }
+  li { margin-bottom: 0.4em; }
+
+  p { margin: 0 0 1em; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.92rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px 10px 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  th { color: var(--ink-dim); font-weight: 500; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; }
+
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #D6D2C4;
+  }
+
+  .note {
+    background: var(--surface);
+    border-left: 3px solid var(--red);
+    padding: 14px 18px;
+    border-radius: 0 4px 4px 0;
+    color: var(--ink-dim);
+    font-size: 0.95rem;
+  }
+
+  details {
+    border-bottom: 1px solid var(--rule);
+    padding: 16px 0;
+  }
+  details summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--ink);
+    list-style: none;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "+ "; color: var(--red-bright); font-family: 'IBM Plex Mono', monospace; }
+  details[open] summary::before { content: "\2212 "; }
+  details p { margin-top: 10px; color: var(--ink-dim); }
+
+  footer {
+    padding: 48px 0 80px;
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .btn.primary { transition: background 0.15s ease; }
+  }
+
+  @media (max-width: 480px) {
+    body { font-size: 16px; }
+    header.hero { padding: 56px 0 40px; }
+    section { padding: 40px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="mark">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="10" width="32" height="3.4" fill="#B3261E"/>
+        <rect x="7" y="16.5" width="26" height="2.6" fill="#B3261E"/>
+        <rect x="10" y="19" width="2.6" height="15" fill="#B3261E"/>
+        <rect x="27.4" y="19" width="2.6" height="15" fill="#B3261E"/>
+      </svg>
+      <span>MikoLabs</span>
+    </div>
+
+    <h1>Scrape X (Twitter) profiles and tweets without an API key</h1>
+    <p class="lede">Twitter X Profile Scraper pulls public profile data, tweets, replies, and media from X — no API credentials, no authentication, no rate-limit wall. Point it at a handle and get structured JSON back in minutes.</p>
+
+    <div class="cta-row">
+      <a class="btn primary" href="https://apify.com/mikolabs/twitter-x-profile-scraper" rel="noopener">Try it on Apify</a>
+      <a class="btn ghost" href="#input">See the input format</a>
+    </div>
+  </header>
+
+  <section id="what">
+    <h2>What it does</h2>
+    <p>The Actor auto-detects what you're after — profiles, tweets, replies, or media — and delivers clean, structured data instantly. Give it usernames, profile URLs, or search terms; it handles the rest.</p>
+    <ul>
+      <li><strong>Profile information</strong> — bio, followers, following, location, website, join date, avatar, banner</li>
+      <li><strong>Tweets and posts</strong> — full text, timestamps, hashtags, mentions, URLs, engagement metrics</li>
+      <li><strong>Replies and conversations</strong> — threaded reply tweets with full context</li>
+      <li><strong>Media content</strong> — tweets containing images, videos, and GIFs</li>
+      <li><strong>Retweets and quote tweets</strong> — including original author metadata</li>
+      <li><strong>Search results</strong> — keyword search within a profile or globally</li>
+    </ul>
+  </section>
+
+  <section id="why">
+    <h2>Why scrape X (Twitter)</h2>
+    <p>X has over 500 million monthly active users and is one of the richest real-time data sources on the internet — useful for market research, sentiment analysis, competitive intelligence, and trend tracking.</p>
+    <table>
+      <tr><th>Use case</th><th>What it gives you</th></tr>
+      <tr><td>Brand monitoring</td><td>Track mentions and sentiment in real time</td></tr>
+      <tr><td>Competitive intelligence</td><td>Analyze competitor tweets, engagement, audience growth</td></tr>
+      <tr><td>Influencer research</td><td>Find influencers by engagement rate, followers, niche</td></tr>
+      <tr><td>Lead generation</td><td>Identify prospects from public activity</td></tr>
+      <tr><td>Academic research</td><td>Build datasets for social studies or NLP training</td></tr>
+      <tr><td>Content strategy</td><td>See which tweet formats drive engagement</td></tr>
+      <tr><td>News &amp; trend tracking</td><td>Catch breaking news and viral content early</td></tr>
+      <tr><td>Market sentiment</td><td>Monitor crypto, stocks, and financial chatter</td></tr>
+    </table>
+  </section>
+
+  <section id="how">
+    <h2>How to scrape X (Twitter)</h2>
+    <ol>
+      <li>Click <strong>Try for free</strong> on the Actor page.</li>
+      <li>Enter Twitter handles (e.g. <code>elonmusk</code>, <code>apify</code>) or paste profile URLs.</li>
+      <li>Configure scraping options — replies, media-only, or profile info.</li>
+      <li>Optionally apply filters — date range, engagement thresholds, content type, or search keywords.</li>
+      <li>Click <strong>Run</strong>.</li>
+      <li>Preview or download your data from the Dataset tab once it finishes.</li>
+    </ol>
+    <p>The Actor routes each request to the right scraping mode automatically — no manual configuration needed.</p>
+  </section>
+
+  <section id="input">
+    <h2>Input</h2>
+    <p>Configure the scraper through the Apify Console input form or pass JSON directly.</p>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+      <tr><td class="mono">twitterHandles</td><td class="mono">string[]</td><td>Usernames to scrape, with or without @</td></tr>
+      <tr><td class="mono">twitterUrls</td><td class="mono">string[]</td><td>Direct profile URLs</td></tr>
+      <tr><td class="mono">includeReplies</td><td class="mono">boolean</td><td>Include reply tweets</td></tr>
+      <tr><td class="mono">mediaOnly</td><td class="mono">boolean</td><td>Only tweets with images or videos</td></tr>
+      <tr><td class="mono">maxItems</td><td class="mono">integer</td><td>Max tweets to collect (0 = unlimited)</td></tr>
+      <tr><td class="mono">searchTerms</td><td class="mono">string[]</td><td>Keywords to search within tweets</td></tr>
+      <tr><td class="mono">startDate</td><td class="mono">string</td><td>Filter from this date (YYYY-MM-DD)</td></tr>
+      <tr><td class="mono">endDate</td><td class="mono">string</td><td>Filter up to this date</td></tr>
+      <tr><td class="mono">minLikes</td><td class="mono">integer</td><td>Minimum likes threshold</td></tr>
+      <tr><td class="mono">minReplies</td><td class="mono">integer</td><td>Minimum replies threshold</td></tr>
+      <tr><td class="mono">minRetweets</td><td class="mono">integer</td><td>Minimum retweets threshold</td></tr>
+      <tr><td class="mono">nsfwContent</td><td class="mono">boolean</td><td>Routes NSFW media through US/CA residential proxy</td></tr>
+    </table>
+
+    <h3>Example input</h3>
+    <pre>{
+  "twitterHandles": ["elonmusk", "apify"],
+  "includeReplies": false,
+  "mediaOnly": false,
+  "maxItems": 100,
+  "searchTerms": ["AI research"],
+  "startDate": "2024-01-01",
+  "endDate": "2024-12-31",
+  "minLikes": 50
+}</pre>
+  </section>
+
+  <section id="output">
+    <h2>Output</h2>
+    <p>Structured JSON per item, exportable as JSON, CSV, Excel, XML, RSS, or an HTML table.</p>
+
+    <h3>Profile output</h3>
+    <pre>{
+  "type": "profile",
+  "username": "apify",
+  "fullname": "Apify",
+  "bio": "Web scraping and automation platform for data extraction",
+  "followers": 12500,
+  "following": 567,
+  "tweets": 1234,
+  "avatar": "https://pbs.twimg.com/profile_images/...",
+  "website": "https://apify.com",
+  "location": "San Francisco, CA",
+  "joined": "January 2024",
+  "scrape_date": "2024-10-24T12:00:00.000Z"
+}</pre>
+
+    <h3>Tweet output</h3>
+    <pre>{
+  "type": "tweet",
+  "username": "@apify",
+  "text": "Excited to announce our new scraping features!",
+  "tweet_url": "https://x.com/apify/status/123456",
+  "date": "Oct 24, 2024 · 12:00 PM UTC",
+  "hashtags": ["#webscraping", "#automation"],
+  "mentions": ["@user1", "@user2"],
+  "stats": { "comments": 12, "retweets": 34, "quotes": 5, "likes": 156 },
+  "is_retweet": false,
+  "is_reply": false,
+  "author": { "username": "@apify", "verified": true }
+}</pre>
+  </section>
+
+  <section id="pricing">
+    <h2>Free vs. paid limits</h2>
+    <table>
+      <tr><th>Feature</th><th>Free tier</th><th>Paid / subscribed</th></tr>
+      <tr><td>Runs per day</td><td>5</td><td>Unlimited</td></tr>
+      <tr><td>Items per target</td><td>10</td><td>Unlimited or custom</td></tr>
+      <tr><td>Parallel scraping</td><td>Standard</td><td>High concurrency</td></tr>
+      <tr><td>Proxy routing</td><td>Direct / fallback</td><td>Residential (US/CA)</td></tr>
+    </table>
+    <p>Apify includes $5 in free usage credits every month — enough for hundreds of tweets and profiles for testing. For regular use, the $49/month Starter plan covers ongoing monitoring and medium-scale collection. For enterprise volume, the Scale plan at $499/month adds the throughput for thousands of profiles and millions of tweets.</p>
+  </section>
+
+  <section id="tips">
+    <h2>Tips for scraping X effectively</h2>
+    <ul>
+      <li>Start small — set <code>maxItems</code> to 20–50 on the first run to validate configuration.</li>
+      <li>Use <code>minLikes</code> or <code>minRetweets</code> to surface high-quality content.</li>
+      <li>Combine include and exclude filters for precise targeting — e.g. media only, no replies.</li>
+      <li>Set <code>startDate</code>/<code>endDate</code> on large collections to avoid over-scraping.</li>
+      <li>Enable residential proxies for the most reliable results at scale.</li>
+      <li>Handles are processed in parallel automatically for faster runs.</li>
+      <li>Failed requests retry automatically with exponential backoff.</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <h2>Frequently asked questions</h2>
+
+    <details>
+      <summary>Can I scrape private Twitter profiles?</summary>
+      <p>No. Twitter X Profile Scraper only works with public profiles. Private or protected accounts cannot be scraped.</p>
+    </details>
+    <details>
+      <summary>Do I need a Twitter API key or account?</summary>
+      <p>No. This Actor requires no Twitter API credentials, cookies, or authentication, and works independently of the official Twitter API.</p>
+    </details>
+    <details>
+      <summary>What export formats are available?</summary>
+      <p>JSON, CSV, Excel (XLSX), XML, RSS, or an HTML table, directly from the Apify Console Dataset tab.</p>
+    </details>
+    <details>
+      <summary>How many tweets can I scrape?</summary>
+      <p>On paid plans there's no hard cap — set <code>maxItems</code> to 0 for unlimited. Free-tier users get up to 5 runs per day with up to 10 items per target.</p>
+    </details>
+    <details>
+      <summary>Can I search for specific keywords within a profile?</summary>
+      <p>Yes — use <code>searchTerms</code> to search within a profile's tweets, with support for AND/OR operators.</p>
+    </details>
+    <details>
+      <summary>Is it legal to scrape X (Twitter)?</summary>
+      <p>Personal data is protected under GDPR and similar regulations worldwide. Don't scrape personal data without a legitimate reason, and review X's Terms of Service before scraping. Always scrape responsibly.</p>
+    </details>
+  </section>
+
+  <section id="quickstart">
+    <h2>Python quick start</h2>
+    <pre>from apify_client import ApifyClient
+
+client = ApifyClient("&lt;YOUR_API_TOKEN&gt;")
+
+run_input = {
+    "twitterHandles": ["figma"],
+    "maxItems": 20,
+    "proxyConfiguration": {
+        "useApifyProxy": True,
+        "apifyProxyGroups": ["RESIDENTIAL"],
+    },
+}
+
+run = client.actor("mikolabs/Twitter-X-Profile-Scraper").call(run_input=run_input)
+
+print(f"Dataset: https://console.apify.com/storage/datasets/{run.default_dataset_id}")
+for item in client.dataset(run.default_dataset_id).iterate_items():
+    print(item)</pre>
+  </section>
+
+  <footer>
+    <p>Built and maintained by <a href="https://mikolabs.xyz/" rel="noopener">MikoLabs</a> — automation and scraping tools for developers, marketers, and businesses. Questions or custom scraping needs: <a href="mailto:support@mikolabs.xyz">support@mikolabs.xyz</a></p>
+  </footer>
+
+</div>
+
+</body>
+</html>
